@@ -132,7 +132,7 @@ G = 6.67408*(10**(-11))
 'Stellar Constants'
 'Stellar Mass (in kilograms (kg))'
 M = 1.989*(10**30)
-'Stellar Radius (in m)"
+'Stellar Radius (in m)'
 R = 35371000000
 'Set Initial Positions (in meters (m))'
 xc, yc, zc = 0, 0, 0
@@ -144,7 +144,7 @@ draw_object(R, xc, yc, zc)
 'Planetary Constants'
 'Set Object Masses (in kilograms (kg))'
 m = 5.972*(10**24)
-"Set Object Radii (in meters (m))'
+'Set Object Radii (in meters (m))'
 r = 6371000000
 #e_eqRad, e_polarRad = 1, 1
 'Set Initial Positions (in meters (m))'
