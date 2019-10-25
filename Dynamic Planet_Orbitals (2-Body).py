@@ -3,6 +3,8 @@ import numpy as np
 import math as m
 import time
 
+fig = mlab.figure('Solar System', bgcolor = (0,0,0), size = (700,500))
+
 'Spherical constants'
 points_range = 50
 phi = np.linspace(0, 2*np.pi, points_range)
@@ -141,7 +143,7 @@ scaling_factor = 1550000000
 
 'Stellar Constants'
 'Stellar Radius (in m)'
-R = 35371000000
+R = 69595600*50
 'Set Initial Positions (in meters (m))'
 xc1, yc1, zc1 = gravObjects[0][1], gravObjects[0][2], gravObjects[0][3]
 'Set Initial Velocities (in m/s)'
@@ -154,51 +156,148 @@ draw_object(R, xc1, yc1, zc1)
 'Set Object Masses (in kilograms (kg))'
 m = 5.972*(10**24)
 'Set Object Radii (in meters (m))'
-e_eqRad, e_polarRad = 6378100000, 6356800000
+me_eqRad, me_polarRad = 243970000, 243970000
+v_eqRad, v_polarRad = 605180000, 605180000
+e_eqRad, e_polarRad = 637810000, 635680000
+ma_eqRad, ma_polarRad = 339620000, 337620000
+j_eqRad, j_polarRad = 7149200000, 6685400000
+s_eqRad, s_polarRad = 6026800000, 5436400000
+u_eqRad, u_polarRad = 2555900000, 2497300000
+n_eqRad, n_polarRad = 2476400000, 2434100000
 'Set Initial Positions (in meters (m))'
-e_xp0, e_yp0, e_zp0 = -147095000000, 0, 0           #(-147095000000, 0, 0) 
+me_xp0, me_yp0, me_zp0 = -57910000000, 0, 0   
+v_xp0, v_yp0, v_zp0 = -108210000000, 0, 0
+e_xp0, e_yp0, e_zp0 = -147095000000, 0, 0
+ma_xp0, ma_yp0, ma_zp0 = -227920000000, 0, 0
+j_xp0, j_yp0, j_zp0 = -778570000000, 0, 0
+s_xp0, s_yp0, s_zp0 = -1433530000000, 0, 0
+u_xp0, u_yp0, u_zp0 = -2872460000000, 0, 0
+n_xp0, n_yp0, n_zp0 = -5906380000000, 0, 0
 'Set Initial Velocities (in m/s)'
-e_vxp0, e_vyp0, e_vzp0 = 0, -30300, 0              #(0, -30300, 0)
+me_vxp0, me_vyp0, me_vzp0 = 0, -47340, 0           
+v_vxp0, v_vyp0, v_vzp0 = 0, -35012, 0
+e_vxp0, e_vyp0, e_vzp0 = 0, -30300, 0
+ma_vxp0, ma_vyp0, ma_vzp0 = 0, -24072, 0
+j_vxp0, j_vyp0, j_vzp0 = 0, -13040, 0
+s_vxp0, s_vyp0, s_vzp0 = 0, -9611, 0
+u_vxp0, u_vyp0, u_vzp0 = 0, -5431, 0
+n_vxp0, n_vyp0, n_vzp0 = 0, -7006, 0 
 'Draw Initial Object'
+draw_sphere(me_eqRad, me_polarRad)
+mercury = mlab.mesh(x, y, z)
+draw_sphere(v_eqRad, v_polarRad)
+venus = mlab.mesh(x, y, z)
 draw_sphere(e_eqRad, e_polarRad)
 earth = mlab.mesh(x, y, z)
+draw_sphere(ma_eqRad, ma_polarRad)
+mars = mlab.mesh(x, y, z)
+draw_sphere(j_eqRad, j_polarRad)
+jupiter = mlab.mesh(x, y, z)
+draw_sphere(s_eqRad, s_polarRad)
+saturn = mlab.mesh(x, y, z)
+draw_sphere(u_eqRad, u_polarRad)
+uranus = mlab.mesh(x, y, z)
+draw_sphere(n_eqRad, n_polarRad)
+neptune = mlab.mesh(x, y, z)
 #velocity_text = mlab.text3d(-147095000000, -147095000000, 0 + (polarRad*2), str(vectorMag(vx_p0, vy_p0, vz_p0)), scale=(scaling_factor, scaling_factor, scaling_factor))
 
 
 'Calculate and Plot the Trajectory Line'
-def calcTraj(d, x, y, z ,vx, vy, vz):
+def calcTraj(d, rad, x, y, z ,vx, vy, vz):
     x_traj , y_traj , z_traj = [], [], []
     for i in range(0, d):
         if i == 1:    
             computeParameters(x, y, z , vx, vy, vz)
             x_traj.append(x_n1),    y_traj.append(y_n1),    z_traj.append(z_n1)
         elif i > 1:
-            if dist(xc1, yc1, zc1, x_n1, y_n1, z_n1) < R:
-                break
-            else:
-                computeParameters(x_n1, y_n1, z_n1, vx_n1, vy_n1, vz_n1)
-                x_traj.append(x_n1),    y_traj.append(y_n1),    z_traj.append(z_n1)            
-    mlab.plot3d(x_traj , y_traj , z_traj, color=(1,1,1), tube_radius = 1000000000/2)
+            computeParameters(x_n1, y_n1, z_n1, vx_n1, vy_n1, vz_n1)
+            x_traj.append(x_n1),    y_traj.append(y_n1),    z_traj.append(z_n1)
+    mlab.plot3d(x_traj , y_traj , z_traj, color=(1,1,1), tube_radius = rad)
 
 
 
-days = 2515
-calcTraj(days, e_xp0, e_yp0, e_zp0, e_vxp0, e_vyp0, e_vzp0)
+days = 124
+calcTraj(days, 100000000/3, me_xp0, me_yp0, me_zp0, me_vxp0, me_vyp0, me_vzp0)
+calcTraj(days, 100000000/2, v_xp0, v_yp0, v_zp0, v_vxp0, v_vyp0, v_vzp0)
+calcTraj(days, 100000000/2, e_xp0, e_yp0, e_zp0, e_vxp0, e_vyp0, e_vzp0)
+calcTraj(days, 100000000/2, ma_xp0, ma_yp0, ma_zp0, ma_vxp0, ma_vyp0, ma_vzp0)
+calcTraj(days, 100000000, j_xp0, j_yp0, j_zp0, j_vxp0, j_vyp0, j_vzp0)
+calcTraj(days, 100000000, s_xp0, s_yp0, s_zp0, s_vxp0, s_vyp0, s_vzp0)
+calcTraj(days, 100000000, u_xp0, u_yp0, u_zp0, u_vxp0, u_vyp0, u_vzp0)
+calcTraj(days, 100000000, n_xp0, n_yp0, n_zp0, n_vxp0, n_vyp0, n_vzp0)
+
+
 'Animate the figure'
 @mlab.animate(delay = 10)
 def anim():
     for i in range(0, days):
-        time.sleep(.00000000000000001)
+        time.sleep(.000000000001)
         if i == 1:
+            'Mercury'
+            computeParameters(me_xp0, me_yp0, me_zp0, me_vxp0, me_vyp0, me_vzp0)
+            me_x, me_y, me_z, me_vx, me_vy, me_vz = x_n1, y_n1, z_n1, vx_n1, vy_n1, vz_n1
+            mercury.mlab_source.set(x = me_eqRad * np.sin(phi) * np.cos(theta) + me_x, y = me_eqRad * np.sin(phi) * np.sin(theta) + me_y, z = me_polarRad * np.cos(phi) + me_z)
+            'Venus'
+            computeParameters(v_xp0, v_yp0, v_zp0, v_vxp0, v_vyp0, v_vzp0)
+            v_x, v_y, v_z, v_vx, v_vy, v_vz = x_n1, y_n1, z_n1, vx_n1, vy_n1, vz_n1
+            venus.mlab_source.set(x = v_eqRad * np.sin(phi) * np.cos(theta) + v_x, y = v_eqRad * np.sin(phi) * np.sin(theta) + v_y, z = v_polarRad * np.cos(phi) + v_z)
+            'Earth'
             computeParameters(e_xp0, e_yp0, e_zp0, e_vxp0, e_vyp0, e_vzp0)
-            earth.mlab_source.set(x = e_eqRad * np.sin(phi) * np.cos(theta) + x_n1, y = e_eqRad * np.sin(phi) * np.sin(theta) + y_n1, z = e_polarRad * np.cos(phi) + z_n1)
-            #gravity_vector = draw_gravVector(M, x_n1, y_n1, z_n1)
+            e_x, e_y, e_z, e_vx, e_vy, e_vz = x_n1, y_n1, z_n1, vx_n1, vy_n1, vz_n1
+            earth.mlab_source.set(x = e_eqRad * np.sin(phi) * np.cos(theta) + e_x, y = e_eqRad * np.sin(phi) * np.sin(theta) + e_y, z = e_polarRad * np.cos(phi) + e_z)
+            'Mars'
+            computeParameters(ma_xp0, ma_yp0, ma_zp0, ma_vxp0, ma_vyp0, ma_vzp0)
+            ma_x, ma_y, ma_z, ma_vx, ma_vy, ma_vz = x_n1, y_n1, z_n1, vx_n1, vy_n1, vz_n1
+            mars.mlab_source.set(x = ma_eqRad * np.sin(phi) * np.cos(theta) + ma_x, y = e_eqRad * np.sin(phi) * np.sin(theta) + ma_y, z = e_polarRad * np.cos(phi) + ma_z)
+            'Jupiter'
+            computeParameters(j_xp0, j_yp0, j_zp0, j_vxp0, j_vyp0, j_vzp0)
+            j_x, j_y, j_z, j_vx, j_vy, j_vz = x_n1, y_n1, z_n1, vx_n1, vy_n1, vz_n1
+            jupiter.mlab_source.set(x = j_eqRad * np.sin(phi) * np.cos(theta) + j_x, y = j_eqRad * np.sin(phi) * np.sin(theta) + j_y, z = j_polarRad * np.cos(phi) + j_z)
+            'Saturn'
+            computeParameters(s_xp0, s_yp0, s_zp0, s_vxp0, s_vyp0, s_vzp0)
+            s_x, s_y, s_z, s_vx, s_vy, s_vz = x_n1, y_n1, z_n1, vx_n1, vy_n1, vz_n1
+            saturn.mlab_source.set(x = s_eqRad * np.sin(phi) * np.cos(theta) + s_x, y = s_eqRad * np.sin(phi) * np.sin(theta) + s_y, z = s_polarRad * np.cos(phi) + s_z)
+            'Uranus'
+            computeParameters(u_xp0, u_yp0, u_zp0, u_vxp0, u_vyp0, u_vzp0)
+            u_x, u_y, u_z, u_vx, u_vy, u_vz = x_n1, y_n1, z_n1, vx_n1, vy_n1, vz_n1
+            uranus.mlab_source.set(x = u_eqRad * np.sin(phi) * np.cos(theta) + u_x, y = u_eqRad * np.sin(phi) * np.sin(theta) + u_y, z = u_polarRad * np.cos(phi) + u_z)
+            'Neptune'
+            computeParameters(n_xp0, n_yp0, n_zp0, n_vxp0, n_vyp0, n_vzp0)
+            n_x, n_y, n_z, n_vx, n_vy, n_vz = x_n1, y_n1, z_n1, vx_n1, vy_n1, vz_n1
+            neptune.mlab_source.set(x = n_eqRad * np.sin(phi) * np.cos(theta) + n_x, y = n_eqRad * np.sin(phi) * np.sin(theta) + n_y, z = n_polarRad * np.cos(phi) + n_z)
         elif i > 1:
-            if dist(xc1, yc1, zc1, x_n1, y_n1, z_n1) < R:
-                break
-            else:
-                computeParameters(x_n1, y_n1, z_n1, vx_n1, vy_n1, vz_n1)
-                earth.mlab_source.set(x = e_eqRad * np.sin(phi) * np.cos(theta) + x_n1, y = e_eqRad * np.sin(phi) * np.sin(theta) + y_n1, z = e_polarRad * np.cos(phi) + z_n1)
+            'Mercury'
+            computeParameters(me_x, me_y, me_z, me_vx, me_vy, me_vz)
+            me_x, me_y, me_z, me_vx, me_vy, me_vz = x_n1, y_n1, z_n1, vx_n1, vy_n1, vz_n1
+            mercury.mlab_source.set(x = me_eqRad * np.sin(phi) * np.cos(theta) + me_x, y = me_eqRad * np.sin(phi) * np.sin(theta) + me_y, z = me_polarRad * np.cos(phi) + me_z)
+            'Venus'
+            computeParameters(v_x, v_y, v_z, v_vx, v_vy, v_vz)
+            v_x, v_y, v_z, v_vx, v_vy, v_vz = x_n1, y_n1, z_n1, vx_n1, vy_n1, vz_n1
+            venus.mlab_source.set(x = v_eqRad * np.sin(phi) * np.cos(theta) + v_x, y = v_eqRad * np.sin(phi) * np.sin(theta) + v_y, z = v_polarRad * np.cos(phi) + v_z)
+            'Earth'
+            computeParameters(e_x, e_y, e_z, e_vx, e_vy, e_vz)
+            e_x, e_y, e_z, e_vx, e_vy, e_vz = x_n1, y_n1, z_n1, vx_n1, vy_n1, vz_n1
+            earth.mlab_source.set(x = e_eqRad * np.sin(phi) * np.cos(theta) + e_x, y = e_eqRad * np.sin(phi) * np.sin(theta) + e_y, z = e_polarRad * np.cos(phi) + e_z)
+            'Mars'
+            computeParameters(ma_x, ma_y, ma_z, ma_vx, ma_vy, ma_vz)
+            ma_x, ma_y, ma_z, ma_vx, ma_vy, ma_vz = x_n1, y_n1, z_n1, vx_n1, vy_n1, vz_n1
+            mars.mlab_source.set(x = ma_eqRad * np.sin(phi) * np.cos(theta) + ma_x, y = e_eqRad * np.sin(phi) * np.sin(theta) + ma_y, z = e_polarRad * np.cos(phi) + ma_z)
+            'Jupiter'
+            computeParameters(j_x, j_y, j_z, j_vx, j_vy, j_vz)
+            j_x, j_y, j_z, j_vx, j_vy, j_vz = x_n1, y_n1, z_n1, vx_n1, vy_n1, vz_n1
+            jupiter.mlab_source.set(x = j_eqRad * np.sin(phi) * np.cos(theta) + j_x, y = j_eqRad * np.sin(phi) * np.sin(theta) + j_y, z = j_polarRad * np.cos(phi) + j_z)
+            'Saturn'
+            computeParameters(s_x, s_y, s_z, s_vx, s_vy, s_vz)
+            s_x, s_y, s_z, s_vx, s_vy, s_vz = x_n1, y_n1, z_n1, vx_n1, vy_n1, vz_n1
+            saturn.mlab_source.set(x = s_eqRad * np.sin(phi) * np.cos(theta) + s_x, y = s_eqRad * np.sin(phi) * np.sin(theta) + s_y, z = s_polarRad * np.cos(phi) + s_z)
+            'Uranus'
+            computeParameters(u_x, u_y, u_z, u_vx, u_vy, u_vz)
+            u_x, u_y, u_z, u_vx, u_vy, u_vz = x_n1, y_n1, z_n1, vx_n1, vy_n1, vz_n1
+            uranus.mlab_source.set(x = u_eqRad * np.sin(phi) * np.cos(theta) + u_x, y = u_eqRad * np.sin(phi) * np.sin(theta) + u_y, z = u_polarRad * np.cos(phi) + u_z)
+            'Neptune'
+            computeParameters(n_x, n_y, n_z, n_vx, n_vy, n_vz)
+            n_x, n_y, n_z, n_vx, n_vy, n_vz = x_n1, y_n1, z_n1, vx_n1, vy_n1, vz_n1
+            neptune.mlab_source.set(x = n_eqRad * np.sin(phi) * np.cos(theta) + n_x, y = n_eqRad * np.sin(phi) * np.sin(theta) + n_y, z = n_polarRad * np.cos(phi) + n_z)
         yield
 
 anim()
