@@ -128,18 +128,31 @@ def RK_4(ID, x, y, z, vx, vy, vz):
     vy_n1 = vy + ((del_t/6)*(kv['k1_vy'] + (2*kv['k2_vy']) + (2*kv['k3_vy']) + kv['k4_vy']))
     vz_n1 = vz + ((del_t/6)*(kv['k1_vz'] + (2*kv['k2_vz']) + (2*kv['k3_vz']) + kv['k4_vz']))
 
-
-
+    
 
 'Set Initial Positions (in meters (m)) and Set Initial Velocities (in m/s) and Mass (in kilograms (kg)) of the gravitational objects'
-'gravObjects = [(ID, Mass, EqRadius, PolarRadius, Initial x_pos, Initial y_pos, Initial z_pos, Initial x_vel, Initial y_vel, Initial z_vel)]'   
+'gravObjects = [(ID, Mass, EqRadius, PolarRadius, Initial x_pos, Initial y_pos, Initial z_pos, Initial x_vel, Initial y_vel, Initial z_vel)]'
+#for i in range(7750, 7851, 10):
+mlab_fig = mlab.figure('N - Body System', bgcolor = (0,0,0), size = (700,500))
+#print(i)
+
 #Sun, Earth and Mars
 ##u = [[0, 1.989*(10**30), 6955100000, 6955100000, 0, 0, 0, 0, 0, 0], \
 ##         [1, 5.972*(10**24), 237100000, 237100000, 152100000000, 0, 0, 0, 29290, 0], \
 ##         [2, 7.348*(10**22), 173710000, 173710000, 152484400000, 0, 0, 0, 29451, 0]]
-u = [[0, 1.989*(10**30), 16955100000, 16955100000, -20000000000*3, 0, 0, 0, 12000, 0, (1, 0, 0)], \
-         [1, 1.989*(10**30), 16955100000, 16955100000, 115000000000*3, 78000000000*2, 0, -17000, -5000, 0, (0, 0, 1)], \
-         [2, 1.989*(10**30), 16955100000, 16955100000, 115000000000*3, -78000000000*2, 0, 12000, -1000, 0, (0, 1, 0)]]
+##u = [[0, 1.989*(10**30), 16955100000, 16955100000, -20000000000*3, 0, 0, 0, 12000, 0, (1, 0, 0)], \
+##         [1, 1.989*(10**30), 16955100000, 16955100000, 115000000000*3, 78000000000*2, 0, -17000, -5000, 0, (0, 0, 1)], \
+##         [2, 1.989*(10**30), 16955100000, 16955100000, 115000000000*3, -78000000000*2, 0, 12000, -1000, 0, (0, 1, 0)]]
+
+
+'Three Body Solution (Figure Eight)'
+V = 8850
+v0x, v0y  = -2*(V*.93420737), -2*(V*.864731) 
+v1y, v1y = V*.93420737, V*.864731
+
+u = [[0, 1.989*(10**30), 16955100000, 16955100000, 0, 0, 0, v0x, v0y, 0, (1, 0, 0)], \
+         [1, 1.989*(10**30), 16955100000, 16955100000, 545000000000*.97000436, -545000000000*.24308753, 0, v1y, v1y, 0, (0, 0, 1)], \
+         [2, 1.989*(10**30), 16955100000, 16955100000, -545000000000*.97000436, 545000000000*.24308753, 0, v1y, v1y, 0, (0, 1, 0)]]
 
 v = copy.deepcopy(u)
 
@@ -164,16 +177,18 @@ for i in range(len(u)):
 
 'Define Initial Trajectories and Create Dictionary to house them'
 d_traj = {}
+objDist = {}
 for i in range(len(u)):
     d_traj['x_traj'+str(i)] = []
     d_traj['y_traj'+str(i)] = []
     d_traj['z_traj'+str(i)] = []
+    objDist['objectDist'+str(i)] = []
 
-
-days = 1925
+days = 1000
 'Draw the Trajectory Lines for each objects updating for each objects position'
 instance = 'trajectories'
-object1Dist, object2Dist, object3Dist, index = [], [], [], []
+index = []
+#objectDist, object2Dist, object3Dist, , [], [], []
 for i in range(0, days):
     index.append(i)
     for j in range(0, len(u)):
@@ -181,7 +196,7 @@ for i in range(0, days):
         d_traj['x_traj'+str(j)].append(x_n1)
         d_traj['y_traj'+str(j)].append(y_n1)
         d_traj['z_traj'+str(j)].append(z_n1)
-##            object3Dist.append(dist(x_n1, y_n1, z_n1, u[0][4], u[0][5], u[0][6]))             
+        objDist['objectDist'+str(j)].append(dist(x_n1, y_n1, z_n1, 0, 0, 0))
         u[j][4], u[j][5], u[j][6] = x_n1, y_n1, z_n1
         u[j][7], u[j][8], u[j][9] = vx_n1, vy_n1, vz_n1
 
@@ -189,7 +204,6 @@ for i in range(len(u)):
     mlab.plot3d(d_traj['x_traj'+str(i)], d_traj['y_traj'+str(i)], d_traj['z_traj'+str(i)], color=(1,1,1), tube_radius = 100000000/2)
 
 
-#line1 = mlab.plot3d([u[1][4], u[1][4]], [u[1][5], u[1][5]], [0, 126955100000], color=(1,1,1), tube_radius = 1000000000/2)
 'Animate the figure'
 instance = 'animate'
 @mlab.animate(delay = 10)
@@ -200,23 +214,24 @@ def anim():
         for j in range(0, len(v)):
             RK_4(v[j][0], v[j][4], v[j][5], v[j][6], v[j][7], v[j][8], v[j][9])            
             d_obj['object'+str(j)].mlab_source.set(x = v[j][2] * np.sin(phi) * np.cos(theta) + x_n1, y = v[j][2] * np.sin(phi) * np.sin(theta) + y_n1, z = v[j][3] * np.cos(phi) + z_n1)
-            
+                
             v[j][4], v[j][5], v[j][6] = x_n1, y_n1, z_n1
             v[j][7], v[j][8], v[j][9] = vx_n1, vy_n1, vz_n1
         yield
     print(i)
 anim()
-
+    
 mlab.view(distance=1250000000000, focalpoint = (0, 0, 0))
 mlab.show()
+#mlab.draw()
 
 
-##fig = plt.figure()
-##ax = fig.add_subplot(211)
-##ax.set_xlabel('Days')
-##ax.set_ylabel('Distance from Sun (m)')
-##plt.plot(index, object1Dist, color = 'blue', label = 'Object 1')
-##plt.plot(index, object2Dist, color = 'green', label = 'Object 2')
-##plt.plot(index, object3Dist, color = 'red', label = 'Object 3')
-##plt.legend()
-##plt.show()
+fig = plt.figure()
+ax = fig.add_subplot(211)
+ax.set_xlabel('Days')
+ax.set_ylabel('Distance from (0, 0, 0) (m)')
+plt.plot(index, objDist['objectDist'+str(0)], color = 'red', label = 'Object 0')
+plt.plot(index, objDist['objectDist'+str(1)], color = 'green', label = 'Object 1')
+plt.plot(index, objDist['objectDist'+str(2)], color = 'blue', label = 'Object 2')
+plt.legend()
+plt.show()
